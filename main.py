@@ -20,23 +20,18 @@ genai.configure(api_key=os.environ["API_KEY"])
 
 # Function to get video length
 def get_video_length(video_path):
-    # Ensure the path is valid
     if not os.path.exists(video_path):
         return "Error: Video file not found."
 
-    # Open the video file
     video = cv2.VideoCapture(video_path)
 
     if not video.isOpened():
         return "Error: Could not open video."
 
-    # Get the total number of frames
     frames = video.get(cv2.CAP_PROP_FRAME_COUNT)
 
-    # Get the frames per second (fps)
     fps = video.get(cv2.CAP_PROP_FPS)
 
-    # Calculate the duration in seconds
     duration = frames / fps if fps > 0 else 0
 
     video.release()
@@ -129,10 +124,9 @@ def replace_audio_in_video(video_path, audio_path, output_path):
     
     return output_path  
 
-
 # Main function for the Streamlit app
 def main():
-    st.title("Video to Audio and Transcript Converter")
+    st.title("ClearSpeak - Correct the grammatical errors and remove filler words from the video.")
 
     # Upload video file
     uploaded_video = st.file_uploader("Upload a video file", type=["mp4", "mov"])
@@ -141,12 +135,12 @@ def main():
         # Save the uploaded video to a temporary file
         with tempfile.NamedTemporaryFile(delete=False, suffix=".mp4") as temp_video_file:
             temp_video_file.write(uploaded_video.read())
-            video_path = temp_video_file.name  # Path to the saved video
+            video_path = temp_video_file.name 
 
         # Get video length and ensure it's less than 2 minutes
         video_length = get_video_length(video_path)
         if isinstance(video_length, str):
-            st.write(video_length)  # Error message
+            st.write(video_length) 
             return
 
         if video_length > 120:
@@ -163,29 +157,35 @@ def main():
             # Extract audio from the video 🗣️
             audio_path = extract_audio(video_path)
             if audio_path:
-                # Provide a download link for the extracted audio file
-                with open(audio_path, "rb") as audio_file:
-                    st.audio(audio_file.read(), format="audio/mp3")
+                # for debug🐛
+                # with open(audio_path, "rb") as audio_file:
+                #     st.audio(audio_file.read(), format="audio/mp3")
 
                 # Convert audio to transcript 👀
                 st.write("Transcribing audio...")
                 transcript = transcribe_audio(audio_path)
                 if transcript:
-                    st.write("Transcript:")
-                    st.text_area("Transcript", transcript)
+                    
+                    # for debug🐛
+                    # st.write("Transcript:")
+                    # st.text_area("Transcript", transcript)
 
                     correct_transcript = correct_transcript_genai(transcript)
 
                     if correct_transcript:
-                        st.write("Corrected Transcript:")
-                        st.text_area("Corrected Transcript", correct_transcript)
+
+                        # for debug🐛
+                        # st.write("Corrected Transcript:")
+                        # st.text_area("Corrected Transcript", correct_transcript)
 
                         # Generate audio from corrected transcript :)
                         audio_file_path = text_to_audio(correct_transcript)
 
                         if audio_file_path:
-                            with open(audio_file_path, 'rb') as audio_file:
-                                st.audio(audio_file.read(), format="audio/mp3")
+                            
+                            # for debug🐛
+                            # with open(audio_file_path, 'rb') as audio_file:
+                            #     st.audio(audio_file.read(), format="audio/mp3")
 
                             # Replace audio in the video with the generated audio
                             output_video_path = "output.mp4"
