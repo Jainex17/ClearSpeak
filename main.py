@@ -103,7 +103,6 @@ def text_to_audio(text):
         st.error(f"Error: {response.text}")
         return None
 
-
 def correct_transcript_genai(transcript):
     try:
         model = genai.GenerativeModel("gemini-1.5-flash")
@@ -182,7 +181,7 @@ def main():
                         st.text_area("Corrected Transcript", correct_transcript)
 
                         # Generate audio from corrected transcript :)
-                        audio_file_path = text_to_audio(transcript)
+                        audio_file_path = text_to_audio(correct_transcript)
 
                         if audio_file_path:
                             with open(audio_file_path, 'rb') as audio_file:
